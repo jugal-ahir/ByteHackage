@@ -65,49 +65,6 @@ const CoordinatorDashboard = () => {
     setModalConfig(prev => ({ ...prev, isOpen: false }));
   };
 
-  useEffect(() => {
-    if (!user) {
-      return; // Wait for user to load
-    }
-    if (user.role === 'coordinator' || user.role === 'organizer') {
-      fetchData();
-    } else {
-      setTimeout(() => {
-        navigate('/select-classroom');
-      }, 100);
-    }
-  }, [user, navigate, fetchData]);
-
-  useEffect(() => {
-    if (socket) {
-      socket.on('classroom-status-updated', handleStatusUpdate);
-      socket.on('attendance-updated', handleAttendanceUpdate);
-      socket.on('new-issue', handleNewIssue);
-      socket.on('emergency-alert', handleEmergencyAlert);
-      socket.on('gate-entry-updated', (data) => {
-        setClassrooms(prev => prev.map(room => {
-          if (String(room.roomNumber) === String(data.roomNumber)) {
-            return {
-              ...room,
-              teams: room.teams.map(team =>
-                team._id === data.teamId ? { ...team, gateEntry: data.gateEntry } : team
-              )
-            };
-          }
-          return room;
-        }));
-      });
-
-      return () => {
-        socket.off('classroom-status-updated', handleStatusUpdate);
-        socket.off('attendance-updated', handleAttendanceUpdate);
-        socket.off('new-issue', handleNewIssue);
-        socket.off('emergency-alert', handleEmergencyAlert);
-        socket.off('gate-entry-updated');
-      };
-    }
-  }, [socket, handleStatusUpdate, handleAttendanceUpdate, handleNewIssue, handleEmergencyAlert]);
-
   const fetchData = useCallback(async () => {
     try {
       const [classroomsRes, issuesRes, emergenciesRes] = await Promise.all([
@@ -154,6 +111,49 @@ const CoordinatorDashboard = () => {
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+      return; // Wait for user to load
+    }
+    if (user.role === 'coordinator' || user.role === 'organizer') {
+      fetchData();
+    } else {
+      setTimeout(() => {
+        navigate('/select-classroom');
+      }, 100);
+    }
+  }, [user, navigate, fetchData]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('classroom-status-updated', handleStatusUpdate);
+      socket.on('attendance-updated', handleAttendanceUpdate);
+      socket.on('new-issue', handleNewIssue);
+      socket.on('emergency-alert', handleEmergencyAlert);
+      socket.on('gate-entry-updated', (data) => {
+        setClassrooms(prev => prev.map(room => {
+          if (String(room.roomNumber) === String(data.roomNumber)) {
+            return {
+              ...room,
+              teams: room.teams.map(team =>
+                team._id === data.teamId ? { ...team, gateEntry: data.gateEntry } : team
+              )
+            };
+          }
+          return room;
+        }));
+      });
+
+      return () => {
+        socket.off('classroom-status-updated', handleStatusUpdate);
+        socket.off('attendance-updated', handleAttendanceUpdate);
+        socket.off('new-issue', handleNewIssue);
+        socket.off('emergency-alert', handleEmergencyAlert);
+        socket.off('gate-entry-updated');
+      };
+    }
+  }, [socket, handleStatusUpdate, handleAttendanceUpdate, handleNewIssue, handleEmergencyAlert]);
 
   const getStatusColor = (status) => {
     const colors = {

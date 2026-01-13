@@ -14,28 +14,6 @@ const QuickAttendanceMode = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (!selectedClassroom) {
-      setTimeout(() => {
-        navigate('/select-classroom');
-      }, 100);
-      return;
-    }
-    fetchTeams();
-  }, [selectedClassroom, navigate, fetchTeams]);
-
-  useEffect(() => {
-    if (socket) {
-      socket.on('attendance-bulk-updated', () => {
-        fetchTeams();
-      });
-
-      return () => {
-        socket.off('attendance-bulk-updated');
-      };
-    }
-  }, [socket, fetchTeams]);
-
   const fetchTeams = useCallback(async () => {
     try {
       const response = await axios.get(
@@ -59,6 +37,28 @@ const QuickAttendanceMode = () => {
       setLoading(false);
     }
   }, [selectedClassroom]);
+
+  useEffect(() => {
+    if (!selectedClassroom) {
+      setTimeout(() => {
+        navigate('/select-classroom');
+      }, 100);
+      return;
+    }
+    fetchTeams();
+  }, [selectedClassroom, navigate, fetchTeams]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('attendance-bulk-updated', () => {
+        fetchTeams();
+      });
+
+      return () => {
+        socket.off('attendance-bulk-updated');
+      };
+    }
+  }, [socket, fetchTeams]);
 
   const updateCount = (teamId, delta) => {
     setTeamCounts(prev => {

@@ -16,6 +16,23 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [selectedClassroom, setSelectedClassroom] = useState(null);
 
+  const getApiUrl = useCallback(() => {
+    if (process.env.REACT_APP_API_URL) return process.env.REACT_APP_API_URL;
+    return window.location.port === '3000' ? `http://${window.location.hostname}:5000` : window.location.origin;
+  }, []);
+
+  const fetchUser = useCallback(async () => {
+    try {
+      const response = await axios.get(`${getApiUrl()}/api/auth/me`);
+      setUser(response.data);
+    } catch (error) {
+      localStorage.removeItem('token');
+      delete axios.defaults.headers.common['Authorization'];
+    } finally {
+      setLoading(false);
+    }
+  }, [getApiUrl]);
+
   useEffect(() => {
     const initializeAuth = async () => {
       const token = localStorage.getItem('token');
@@ -40,23 +57,6 @@ export const AuthProvider = ({ children }) => {
 
     initializeAuth();
   }, [fetchUser]);
-
-  const getApiUrl = useCallback(() => {
-    if (process.env.REACT_APP_API_URL) return process.env.REACT_APP_API_URL;
-    return window.location.port === '3000' ? `http://${window.location.hostname}:5000` : window.location.origin;
-  }, []);
-
-  const fetchUser = useCallback(async () => {
-    try {
-      const response = await axios.get(`${getApiUrl()}/api/auth/me`);
-      setUser(response.data);
-    } catch (error) {
-      localStorage.removeItem('token');
-      delete axios.defaults.headers.common['Authorization'];
-    } finally {
-      setLoading(false);
-    }
-  }, [getApiUrl]);
 
   const login = async (username, password) => {
     try {

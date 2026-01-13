@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -39,14 +39,14 @@ export const AuthProvider = ({ children }) => {
     };
 
     initializeAuth();
-  }, []);
+  }, [fetchUser]);
 
-  const getApiUrl = () => {
+  const getApiUrl = useCallback(() => {
     if (process.env.REACT_APP_API_URL) return process.env.REACT_APP_API_URL;
     return window.location.port === '3000' ? `http://${window.location.hostname}:5000` : window.location.origin;
-  };
+  }, []);
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const response = await axios.get(`${getApiUrl()}/api/auth/me`);
       setUser(response.data);
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getApiUrl]);
 
   const login = async (username, password) => {
     try {

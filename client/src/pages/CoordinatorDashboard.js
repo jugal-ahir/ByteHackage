@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -76,7 +76,7 @@ const CoordinatorDashboard = () => {
         navigate('/select-classroom');
       }, 100);
     }
-  }, [user, navigate]);
+  }, [user, navigate, fetchData]);
 
   useEffect(() => {
     if (socket) {
@@ -99,16 +99,16 @@ const CoordinatorDashboard = () => {
       });
 
       return () => {
-        socket.off('classroom-status-updated');
-        socket.off('attendance-updated');
-        socket.off('new-issue');
-        socket.off('emergency-alert');
+        socket.off('classroom-status-updated', handleStatusUpdate);
+        socket.off('attendance-updated', handleAttendanceUpdate);
+        socket.off('new-issue', handleNewIssue);
+        socket.off('emergency-alert', handleEmergencyAlert);
         socket.off('gate-entry-updated');
       };
     }
-  }, [socket]);
+  }, [socket, handleStatusUpdate, handleAttendanceUpdate, handleNewIssue, handleEmergencyAlert]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [classroomsRes, issuesRes, emergenciesRes] = await Promise.all([
         axios.get('/api/classrooms'),
@@ -124,9 +124,9 @@ const CoordinatorDashboard = () => {
       console.error('Error fetching data:', error);
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleStatusUpdate = (data) => {
+  const handleStatusUpdate = useCallback((data) => {
     setClassrooms(prev =>
       prev.map(room =>
         room.roomNumber === data.roomNumber
@@ -134,17 +134,17 @@ const CoordinatorDashboard = () => {
           : room
       )
     );
-  };
+  }, []);
 
-  const handleAttendanceUpdate = (data) => {
+  const handleAttendanceUpdate = useCallback((data) => {
     fetchData(); // Refresh to get updated counts
-  };
+  }, [fetchData]);
 
-  const handleNewIssue = (data) => {
+  const handleNewIssue = useCallback((data) => {
     setIssues(prev => [data.issue, ...prev]);
-  };
+  }, []);
 
-  const handleEmergencyAlert = (data) => {
+  const handleEmergencyAlert = useCallback((data) => {
     setEmergencies(prev => [data, ...prev]);
     // Show browser notification if available
     if ('Notification' in window && Notification.permission === 'granted') {
@@ -153,7 +153,7 @@ const CoordinatorDashboard = () => {
         icon: '/favicon.ico'
       });
     }
-  };
+  }, []);
 
   const getStatusColor = (status) => {
     const colors = {
@@ -595,7 +595,7 @@ const CoordinatorDashboard = () => {
                                   alignItems: 'center',
                                   gap: '4px',
                                   border: `1px solid ${team.gateEntry.verificationType === 'Bonafide' ? '#bbf7d0' :
-                                      team.gateEntry.verificationType === 'ID Card' ? '#bfdbfe' : '#e2e8f0'
+                                    team.gateEntry.verificationType === 'ID Card' ? '#bfdbfe' : '#e2e8f0'
                                     }`
                                 }}>
                                   <VerificationIcon type={team.gateEntry.verificationType} />

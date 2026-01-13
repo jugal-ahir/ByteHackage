@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -22,7 +22,7 @@ const QuickAttendanceMode = () => {
       return;
     }
     fetchTeams();
-  }, [selectedClassroom, navigate]);
+  }, [selectedClassroom, navigate, fetchTeams]);
 
   useEffect(() => {
     if (socket) {
@@ -34,9 +34,9 @@ const QuickAttendanceMode = () => {
         socket.off('attendance-bulk-updated');
       };
     }
-  }, [socket]);
+  }, [socket, fetchTeams]);
 
-  const fetchTeams = async () => {
+  const fetchTeams = useCallback(async () => {
     try {
       const response = await axios.get(
         `/api/teams/classroom/${selectedClassroom}`
@@ -58,7 +58,7 @@ const QuickAttendanceMode = () => {
       console.error('Error fetching teams:', error);
       setLoading(false);
     }
-  };
+  }, [selectedClassroom]);
 
   const updateCount = (teamId, delta) => {
     setTeamCounts(prev => {

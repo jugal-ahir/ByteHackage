@@ -152,7 +152,7 @@ const AdminRoomManagement = () => {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `/api/admin/rooms/${roomNumber}/teams`,
         {
           teamName: newTeamName.trim(),
@@ -449,7 +449,7 @@ const AdminRoomManagement = () => {
                           alignItems: 'center',
                           gap: '6px',
                           border: `1px solid ${team.gateEntry.verificationType === 'Bonafide' ? '#bbf7d0' :
-                              team.gateEntry.verificationType === 'ID Card' ? '#bfdbfe' : '#e2e8f0'
+                            team.gateEntry.verificationType === 'ID Card' ? '#bfdbfe' : '#e2e8f0'
                             }`
                         }}>
                           <VerificationIcon type={team.gateEntry.verificationType} />

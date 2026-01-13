@@ -1,0 +1,97 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--gray-50) 0%, var(--bg-secondary) 100%);
+  padding: var(--space-6);
+  position: relative;
+}
+
+.login-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-10) var(--space-8);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-light);
+  position: relative;
+  z-index: 1;
+}
+
+.login-card h1 {
+  text-align: center;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  letter-spacing: -0.02em;
+  line-height: var(--leading-tight);
+}
+
+.login-card h2 {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-10);
+  font-size: var(--text-base);
+  font-weight: var(--font-normal);
+}
+
+.form-group {
+  margin-bottom: var(--space-6);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--text-primary);
+  font-weight: var(--font-medium);
+  font-size: var(--text-sm);
+  letter-spacing: 0.01em;
+}
+
+.form-group input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-base);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-weight: var(--font-normal);
+  font-family: var(--font-sans);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-group input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.error-message {
+  background-color: var(--danger-light);
+  color: var(--danger);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-6);
+  text-align: center;
+  font-weight: var(--font-medium);
+  font-size: var(--text-sm);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.login-card .btn {
+  width: 100%;
+  margin-top: var(--space-2);
+  font-size: var(--text-base);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-semibold);
+  letter-spacing: 0.01em;
+}

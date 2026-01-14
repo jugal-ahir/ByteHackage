@@ -50,13 +50,31 @@
   padding: var(--space-3) var(--space-5);
 }
 
+.btn-emergency-contact {
+  background-color: #ef4444 !important;
+  color: white !important;
+  box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2), 0 2px 4px -1px rgba(239, 68, 68, 0.1);
+  transition: all 0.2s ease;
+}
+
+.btn-emergency-contact:hover {
+  background-color: #dc2626 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px -1px rgba(239, 68, 68, 0.25), 0 3px 6px -1px rgba(239, 68, 68, 0.15);
+}
+
+.btn-emergency-contact:active {
+  transform: translateY(0);
+}
+
 .teams-list {
   padding: 0 var(--space-6);
   max-width: 1400px;
   margin: 0 auto;
 }
 
-.loading, .error {
+.loading,
+.error {
   text-align: center;
   padding: var(--space-16) var(--space-8);
   font-size: var(--text-lg);
@@ -164,22 +182,129 @@
     align-items: flex-start;
     padding: var(--space-5);
   }
-  
+
   .header-info h1 {
     font-size: var(--text-xl);
   }
-  
+
   .action-buttons {
     grid-template-columns: 1fr;
     padding: 0 var(--space-4);
   }
-  
+
   .teams-list {
     padding: 0 var(--space-4);
   }
-  
+
   .classroom-status-bar {
     margin: var(--space-4);
     padding: var(--space-4);
   }
+}
+
+/* Contact Modal Styles */
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.contact-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.contact-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.contact-name {
+  font-weight: 700;
+  color: #111827;
+  font-size: 1.05rem;
+}
+
+.contact-role {
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.contact-numbers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-num-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.sub-contact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+  background: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.sub-contact-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.contact-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.sub-contact .contact-link {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+}
+
+.contact-link:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+  transform: translateX(4px);
+}
+
+/* Scrollbar styles for the contact list */
+.contact-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.contact-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.contact-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.contact-list::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }

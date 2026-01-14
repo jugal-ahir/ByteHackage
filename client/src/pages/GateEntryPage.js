@@ -40,7 +40,15 @@ const GateEntryPage = () => {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-    const [modalConfig, setModalConfig] = useState({ isOpen: false, title: '', message: '', type: 'info' });
+    const [modalConfig, setModalConfig] = useState({
+        isOpen: false,
+        title: '',
+        message: '',
+        type: 'info',
+        onConfirm: null,
+        showCancel: false,
+        confirmText: 'OK'
+    });
 
     const showModal = (config) => setModalConfig({ ...config, isOpen: true });
     const closeModal = () => setModalConfig(prev => ({ ...prev, isOpen: false }));
@@ -63,7 +71,7 @@ const GateEntryPage = () => {
                                 gateEntry: data.gateEntry,
                                 members: team.members.map(m => {
                                     const updatedM = data.members.find(um => um._id === m._id);
-                                    return updatedM ? { ...m, gateEntry: updatedM.gateEntry } : m;
+                                    return updatedM ? { ...m, gateEntry: updatedM.gateEntry, currentStatus: updatedM.currentStatus || m.currentStatus } : m;
                                 })
                             };
                         }
@@ -73,7 +81,7 @@ const GateEntryPage = () => {
                                 ...team,
                                 gateEntry: data.gateEntry,
                                 members: team.members.map(m =>
-                                    m._id === data.memberId ? { ...m, gateEntry: data.memberGateEntry } : m
+                                    m._id === data.memberId ? { ...m, gateEntry: data.memberGateEntry, currentStatus: data.currentStatus || m.currentStatus } : m
                                 )
                             };
                         }
@@ -143,6 +151,7 @@ const GateEntryPage = () => {
                 },
                 members: t.members.map(m => ({
                     ...m,
+                    currentStatus: !newStatus && m.currentStatus === 'absent' ? 'present' : m.currentStatus,
                     gateEntry: {
                         isEntered: newStatus,
                         enteredAt: new Date(),
@@ -205,6 +214,48 @@ const GateEntryPage = () => {
         } catch (error) {
             console.error('Member update failed:', error);
             fetchAllData();
+        }
+    };
+
+    const handleFinalizeTeam = (team) => {
+        const verificationType = team.verificationType || team.gateEntry?.verificationType || 'Nothing';
+
+        showModal({
+            title: 'Confirm Team Entry',
+            message: `Are you sure you want to mark entry for ${team.teamName}? All members not checked in will be marked as ABSENT.`,
+            type: 'info',
+            showCancel: true,
+            confirmText: 'Mark Entry',
+            onConfirm: () => performFinalize(team, verificationType)
+        });
+    };
+
+    const performFinalize = async (team, verificationType) => {
+        // Optimistic update
+        setAllTeams(prev => prev.map(t =>
+            t._id === team._id ? {
+                ...t,
+                gateEntry: {
+                    ...t.gateEntry,
+                    isEntered: true,
+                    verificationType: verificationType
+                },
+                members: t.members.map(m => ({
+                    ...m,
+                    currentStatus: m.gateEntry?.isEntered ? 'present' : 'absent'
+                }))
+            } : t
+        ));
+
+        try {
+            await axios.put(
+                `/api/classrooms/${team.roomNumber}/teams/${team._id}/finalize-entry`,
+                { verificationType }
+            );
+        } catch (error) {
+            console.error('Finalize entry failed:', error);
+            fetchAllData();
+            showModal({ title: 'Error', message: 'Failed to finalize entry', type: 'error' });
         }
     };
 
@@ -289,20 +340,24 @@ const GateEntryPage = () => {
                                                     width: '20px',
                                                     height: '20px',
                                                     borderRadius: '4px',
-                                                    border: `2px solid ${m.gateEntry?.isEntered ? '#166534' : '#d1d5db'}`,
-                                                    background: m.gateEntry?.isEntered ? '#166534' : 'white',
+                                                    border: `2px solid ${m.gateEntry?.isEntered ? '#166534' : (m.currentStatus === 'absent' ? '#ef4444' : '#d1d5db')}`,
+                                                    background: m.gateEntry?.isEntered ? '#166534' : (m.currentStatus === 'absent' ? '#fee2e2' : 'white'),
                                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                     marginRight: '10px',
                                                     transition: 'all 0.2s'
                                                 }}>
                                                     {m.gateEntry?.isEntered && <span style={{ color: 'white', fontSize: '14px' }}>✓</span>}
+                                                    {!m.gateEntry?.isEntered && m.currentStatus === 'absent' && <span style={{ color: '#ef4444', fontSize: '14px', fontWeight: 800 }}>✕</span>}
                                                 </div>
                                                 <span style={{
-                                                    color: m.gateEntry?.isEntered ? '#1f2937' : '#4b5563',
-                                                    textDecoration: m.gateEntry?.isEntered ? 'none' : 'none',
-                                                    fontWeight: m.gateEntry?.isEntered ? 500 : 400
+                                                    color: m.gateEntry?.isEntered ? '#1f2937' : (m.currentStatus === 'absent' ? '#ef4444' : '#4b5563'),
+                                                    fontWeight: (m.gateEntry?.isEntered || m.currentStatus === 'absent') ? 600 : 400,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '8px'
                                                 }}>
                                                     {m.name}
+                                                    {m.currentStatus === 'absent' && <span style={{ fontSize: '0.65rem', background: '#fee2e2', color: '#ef4444', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>ABSENT</span>}
                                                 </span>
                                             </div>
                                         ))}
@@ -386,17 +441,41 @@ const GateEntryPage = () => {
                                         </div>
                                     </div>
 
-                                    <label className="switch">
-                                        <input
-                                            type="checkbox"
-                                            checked={!!team.gateEntry?.isEntered}
-                                            onChange={() => handleToggleTeam(team)}
-                                        />
-                                        <span className="slider round"></span>
-                                    </label>
-                                    <span className="entry-status-label" style={{ marginTop: '8px', fontWeight: 600, fontSize: '0.8rem', color: team.gateEntry?.isEntered ? '#166534' : '#6b7280', textAlign: 'center' }}>
-                                        {team.gateEntry?.isEntered ? 'TEAM ENTERED' : 'CHECK IN TEAM'}
-                                    </span>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', alignItems: 'center' }}>
+                                        <label className="switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={!!team.gateEntry?.isEntered}
+                                                onChange={() => handleToggleTeam(team)}
+                                            />
+                                            <span className="slider round"></span>
+                                        </label>
+                                        <span className="entry-status-label" style={{ fontWeight: 600, fontSize: '0.75rem', color: team.gateEntry?.isEntered ? '#166534' : '#6b7280', textAlign: 'center', textTransform: 'uppercase' }}>
+                                            {team.gateEntry?.isEntered ? 'TEAM ENTERED' : 'QUICK CHECK-IN'}
+                                        </span>
+                                    </div>
+
+                                    {!team.gateEntry?.isEntered && (
+                                        <button
+                                            className="btn btn-primary finalize-btn"
+                                            onClick={() => handleFinalizeTeam(team)}
+                                            style={{
+                                                marginTop: '16px',
+                                                padding: '10px 16px',
+                                                width: '100%',
+                                                fontSize: '0.85rem',
+                                                fontWeight: 700,
+                                                background: '#1e293b',
+                                                color: 'white',
+                                                borderRadius: '8px',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
+                                            }}
+                                        >
+                                            MARK ENTRY
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         );
@@ -448,11 +527,8 @@ const GateEntryPage = () => {
             </div>
 
             <Modal
-                isOpen={modalConfig.isOpen}
+                {...modalConfig}
                 onClose={closeModal}
-                title={modalConfig.title}
-                message={modalConfig.message}
-                type={modalConfig.type}
             />
         </div>
     );

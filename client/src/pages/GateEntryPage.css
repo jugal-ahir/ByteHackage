@@ -207,3 +207,28 @@ input:checked+.slider:before {
         justify-content: space-between;
     }
 }
+
+.finalize-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.finalize-btn:hover {
+    background: #0f172a !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.finalize-btn:active {
+    transform: translateY(0);
+}
+
+.members-list-check>div {
+    transition: all 0.2s ease;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-left: -8px;
+}
+
+.members-list-check>div:hover {
+    background: #f1f5f9;
+}

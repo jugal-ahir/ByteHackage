@@ -11,8 +11,12 @@ router.post('/', auth, async (req, res) => {
     const { type, roomNumber, teamName, description } = req.body;
 
     // Get organizer emails/contacts from env
-    // Always include jugal.v@ahduni.edu.in
-    const defaultContacts = ['jugal.v@ahduni.edu.in'];
+    // Always include these default contacts
+    const defaultContacts = [
+      'jugal.v@ahduni.edu.in',
+      'archi.d@ahduni.edu.in',
+      'ingenium@ahduni.edu.in'
+    ];
     const envContacts = process.env.ORGANIZER_CONTACTS
       ? process.env.ORGANIZER_CONTACTS.split(',').map(e => e.trim()).filter(e => e)
       : [];

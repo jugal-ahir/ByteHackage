@@ -223,6 +223,19 @@ router.put('/:roomNumber/teams/:teamId/gate-entry', auth, async (req, res) => {
           enteredAt: isEntered ? (mOriginalIsEntered ? mOriginalEnteredAt : new Date()) : null,
           verificationType: verificationType || 'Nothing'
         };
+
+        // If toggling OFF, reset status from absent back to present
+        if (!isEntered && member.currentStatus === 'absent') {
+          member.currentStatus = 'present';
+          member.statusHistory.push({
+            status: 'present',
+            timestamp: new Date(),
+            updatedBy: req.user._id,
+            roomNumber: roomNumber,
+            teamName: team.teamName
+          });
+        }
+
         await member.save();
       }
     }
@@ -304,6 +317,72 @@ router.put('/:roomNumber/teams/:teamId/members/:memberId/gate-entry', auth, asyn
     res.json({ member, teamComp: team.gateEntry });
   } catch (error) {
     console.error('Error updating member gate entry:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Finalize Team Entry (Mark Entry)
+router.put('/:roomNumber/teams/:teamId/finalize-entry', auth, async (req, res) => {
+  try {
+    const { roomNumber, teamId } = req.params;
+    const { verificationType } = req.body;
+    const io = req.app.get('io');
+
+    const team = await Team.findById(teamId).populate('members');
+    if (!team) return res.status(404).json({ message: 'Team not found' });
+
+    // Mark team as entered
+    team.gateEntry = {
+      isEntered: true,
+      enteredAt: team.gateEntry?.enteredAt || new Date(),
+      markedBy: req.user._id,
+      markedByName: req.user.name,
+      verificationType: verificationType || team.verificationType || team.gateEntry?.verificationType || 'Nothing'
+    };
+
+    // Update members
+    if (team.members) {
+      for (const member of team.members) {
+        const wasEntered = member.gateEntry?.isEntered;
+
+        if (wasEntered) {
+          member.currentStatus = 'present';
+        } else {
+          member.currentStatus = 'absent';
+        }
+
+        member.statusHistory.push({
+          status: member.currentStatus,
+          timestamp: new Date(),
+          updatedBy: req.user._id,
+          roomNumber: roomNumber,
+          teamName: team.teamName
+        });
+
+        await member.save();
+      }
+    }
+
+    await team.save();
+
+    if (io) {
+      const eventData = {
+        roomNumber,
+        teamId,
+        gateEntry: team.gateEntry,
+        members: team.members.map(m => ({
+          _id: m._id,
+          gateEntry: m.gateEntry,
+          currentStatus: m.currentStatus
+        }))
+      };
+      io.to(`classroom-${roomNumber}`).emit('gate-entry-updated', eventData);
+      io.to('coordinator-dashboard').emit('gate-entry-updated', eventData);
+    }
+
+    res.json(team);
+  } catch (error) {
+    console.error('Error finalizing entry:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

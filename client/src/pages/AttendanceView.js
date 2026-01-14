@@ -4,6 +4,30 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import './AttendanceView.css';
+import Modal from '../components/Modal';
+
+const EMERGENCY_CONTACTS = [
+  { name: 'Jugal', role: 'Fest Head', phone: ['+91 7405222505'] },
+  { name: 'Param', role: 'Fest Head', phone: ['+91 9909701119'] },
+  { name: 'Shreya', role: 'Secretary', phone: ['+91 9662085390'] },
+  { name: 'Archi', role: 'IEEE Chairperson', phone: ['+91 9512304004'] },
+  { name: 'Pratham', role: 'Treasurer', phone: ['+91 8238007887'] },
+  { name: 'AC', role: '', phone: ['+91 6351897511'] },
+  { name: 'AV', role: '', phone: ['+91 8511145711'] },
+  {
+    name: 'Floor Manager Ground', role: '', phone: [
+      { label: 'Aashi', num: '+91 8511567578' },
+      { label: 'Aastha', num: '+91 8866186299' }
+    ]
+  },
+  {
+    name: 'Floor Manager Second', role: '', phone: [
+      { label: 'Prakshal', num: '+91 9499552948' },
+      { label: 'Namya', num: '+91 7284098115' },
+      { label: 'Dhairya', num: '+91 9104629349' }
+    ]
+  },
+];
 
 const AttendanceView = () => {
   const { user, selectedClassroom, logout, selectClassroom } = useAuth();
@@ -15,6 +39,7 @@ const AttendanceView = () => {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   const fetchClassroom = useCallback(async () => {
     try {
@@ -128,6 +153,9 @@ const AttendanceView = () => {
           <p className="volunteer-name">{user?.name}</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
+          <button className="btn btn-emergency-contact" onClick={() => setIsContactModalOpen(true)}>
+            Emergency Contacts
+          </button>
           <button className="btn btn-secondary" onClick={async () => {
             await selectClassroom(null);
             navigate('/select-classroom');
@@ -293,7 +321,43 @@ const AttendanceView = () => {
           })
         )}
       </div>
-    </div>
+
+      <Modal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        title="Emergency Contacts"
+        type="info"
+      >
+        <div className="contact-list">
+          {EMERGENCY_CONTACTS.map((contact, idx) => (
+            <div key={idx} className="contact-item">
+              <div className="contact-info">
+                <span className="contact-name">{contact.name}</span>
+                {contact.role && <span className="contact-role">({contact.role})</span>}
+              </div>
+              <div className="contact-numbers">
+                {contact.phone.map((p, pIdx) => (
+                  <div key={pIdx} className="contact-num-row">
+                    {typeof p === 'string' ? (
+                      <a href={`tel:${p.replace(/\s+/g, '')}`} className="contact-link">
+                        {p}
+                      </a>
+                    ) : (
+                      <div className="sub-contact">
+                        <span className="sub-contact-name">{p.label}</span>
+                        <a href={`tel:${p.num.replace(/\s+/g, '')}`} className="contact-link">
+                          {p.num}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Modal>
+    </div >
   );
 };
 

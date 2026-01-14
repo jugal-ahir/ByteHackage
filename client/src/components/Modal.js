@@ -1,7 +1,7 @@
 import React from 'react';
 import './Modal.css';
 
-const Modal = ({ isOpen, onClose, title, message, type = 'info', confirmText = 'OK', onConfirm, showCancel = false }) => {
+const Modal = ({ isOpen, onClose, title, message, children, type = 'info', confirmText = 'OK', onConfirm, showCancel = false }) => {
     if (!isOpen) return null;
 
     return (
@@ -12,7 +12,7 @@ const Modal = ({ isOpen, onClose, title, message, type = 'info', confirmText = '
                     <button className="close-btn" onClick={onClose}>&times;</button>
                 </div>
                 <div className="modal-body">
-                    <p>{message}</p>
+                    {children ? children : <p>{message}</p>}
                 </div>
                 <div className="modal-footer">
                     {showCancel && (

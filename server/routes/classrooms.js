@@ -224,8 +224,8 @@ router.put('/:roomNumber/teams/:teamId/gate-entry', auth, async (req, res) => {
           verificationType: verificationType || 'Nothing'
         };
 
-        // If toggling OFF, reset status from absent back to present
-        if (!isEntered && member.currentStatus === 'absent') {
+        // If toggling OFF, reset status from blocked back to present (or keep as is if was present)
+        if (!isEntered && (member.currentStatus === 'absent' || member.currentStatus === 'blocked')) {
           member.currentStatus = 'present';
           member.statusHistory.push({
             status: 'present',
@@ -348,7 +348,7 @@ router.put('/:roomNumber/teams/:teamId/finalize-entry', auth, async (req, res) =
         if (wasEntered) {
           member.currentStatus = 'present';
         } else {
-          member.currentStatus = 'absent';
+          member.currentStatus = 'blocked';
         }
 
         member.statusHistory.push({

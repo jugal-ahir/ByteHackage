@@ -151,7 +151,7 @@ const GateEntryPage = () => {
                 },
                 members: t.members.map(m => ({
                     ...m,
-                    currentStatus: !newStatus && m.currentStatus === 'absent' ? 'present' : m.currentStatus,
+                    currentStatus: !newStatus && (m.currentStatus === 'absent' || m.currentStatus === 'blocked') ? 'present' : m.currentStatus,
                     gateEntry: {
                         isEntered: newStatus,
                         enteredAt: new Date(),
@@ -242,7 +242,7 @@ const GateEntryPage = () => {
                 },
                 members: t.members.map(m => ({
                     ...m,
-                    currentStatus: m.gateEntry?.isEntered ? 'present' : 'absent'
+                    currentStatus: m.gateEntry?.isEntered ? 'present' : 'blocked'
                 }))
             } : t
         ));
@@ -340,24 +340,24 @@ const GateEntryPage = () => {
                                                     width: '20px',
                                                     height: '20px',
                                                     borderRadius: '4px',
-                                                    border: `2px solid ${m.gateEntry?.isEntered ? '#166534' : (m.currentStatus === 'absent' ? '#ef4444' : '#d1d5db')}`,
-                                                    background: m.gateEntry?.isEntered ? '#166534' : (m.currentStatus === 'absent' ? '#fee2e2' : 'white'),
+                                                    border: `2px solid ${m.gateEntry?.isEntered ? '#166534' : (m.currentStatus === 'blocked' ? '#ef4444' : '#d1d5db')}`,
+                                                    background: m.gateEntry?.isEntered ? '#166534' : (m.currentStatus === 'blocked' ? '#fee2e2' : 'white'),
                                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                     marginRight: '10px',
                                                     transition: 'all 0.2s'
                                                 }}>
                                                     {m.gateEntry?.isEntered && <span style={{ color: 'white', fontSize: '14px' }}>✓</span>}
-                                                    {!m.gateEntry?.isEntered && m.currentStatus === 'absent' && <span style={{ color: '#ef4444', fontSize: '14px', fontWeight: 800 }}>✕</span>}
+                                                    {!m.gateEntry?.isEntered && m.currentStatus === 'blocked' && <span style={{ color: '#ef4444', fontSize: '14px', fontWeight: 800 }}>✕</span>}
                                                 </div>
                                                 <span style={{
-                                                    color: m.gateEntry?.isEntered ? '#1f2937' : (m.currentStatus === 'absent' ? '#ef4444' : '#4b5563'),
-                                                    fontWeight: (m.gateEntry?.isEntered || m.currentStatus === 'absent') ? 600 : 400,
+                                                    color: m.gateEntry?.isEntered ? '#1f2937' : (m.currentStatus === 'blocked' ? '#ef4444' : '#4b5563'),
+                                                    fontWeight: (m.gateEntry?.isEntered || m.currentStatus === 'blocked') ? 600 : 400,
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     gap: '8px'
                                                 }}>
                                                     {m.name}
-                                                    {m.currentStatus === 'absent' && <span style={{ fontSize: '0.65rem', background: '#fee2e2', color: '#ef4444', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>ABSENT</span>}
+                                                    {m.currentStatus === 'blocked' && <span style={{ fontSize: '0.65rem', background: '#fee2e2', color: '#ef4444', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>BLOCKED</span>}
                                                 </span>
                                             </div>
                                         ))}

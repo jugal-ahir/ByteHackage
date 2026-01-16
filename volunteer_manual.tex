@@ -1,0 +1,128 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+\titleformat{\section}
+{\normalfont\Large\bfseries\color{darkblue}}{\thesection}{1em}{}
+\titleformat{\subsection}
+{\normalfont\large\bfseries\color{darkblue}}{\thesubsection}{1em}{}
+
+\definecolor{darkblue}{rgb}{0.0, 0.0, 0.55}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{ByteHackage Volunteer Manual}
+\lhead{Hackathon Management System}
+\rfoot{Page \thepage}
+
+\title{\textbf{ByteHackage: Volunteer User Manual}}
+\author{Hackathon Management Team}
+\date{January 2026}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+Welcome to the ByteHackage volunteer team! This manual provides comprehensive instructions on using the Hackathon Management System. As a volunteer, your role is critical in ensuring smooth gate entry, accurate attendance tracking, and timely issue reporting.
+
+\section{Getting Started}
+
+\subsection{Login}
+\begin{itemize}
+    \item Access the website at the provided URL.
+    \item Use your assigned \textbf{username} and \textbf{password}.
+    \item Ensure you stay logged in throughout your shift. If logged out, your session-specific locks may be reset.
+\end{itemize}
+
+\subsection{Classroom Selection}
+\begin{itemize}
+    \item Upon login, you will be prompted to select a classroom (e.g., 004, 005, 202, etc.).
+    \item \textbf{Important:} You can only select \textbf{one classroom} per session. Once selected, the app will be locked to that room to prevent accidental cross-room updates.
+    \item If you need to change your room, you must logout and login again.
+\end{itemize}
+
+\section{Key Features}
+
+\subsection{Gate Entry Management}
+The Gate Entry page is used during the initial check-in phase.
+\begin{itemize}
+    \item \textbf{Search:} Use the search bar to find teams by Name, Member Name, or Room Number.
+    \item \textbf{Verification Type:} Before marking entry, select the verification method used:
+    \begin{itemize}
+        \item \textbf{Bonafide:} Official bonafide certificate verified.
+        \item \textbf{ID Card:} Student ID card verified.
+        \item \textbf{Nothing:} No physical ID verified (not recommended).
+    \end{itemize}
+    \item \textbf{Individual Toggle:} Tap individual member names to mark them as entered.
+    \item \textbf{Team Toggle (Quick Check-in):} Use the slider to mark the entire team as entered.
+    \item \textbf{Mark Entry:} The final ``Mark Entry'' button will mark all checked members as present and automatically mark all unchecked members as \textbf{ABSENT}.
+\end{itemize}
+
+\subsection{Attendance Management}
+Once teams are in their rooms, use the Attendance View.
+\begin{itemize}
+    \item \textbf{Status Updates:} For each member, you can set the status to:
+    \begin{itemize}
+        \item \textbf{Present:} Physically in the room.
+        \item \textbf{Absent:} Not reported yet.
+        \item \textbf{At Lunch:} Currently out for a meal.
+        \item \textbf{Sleeping:} Resting in the room/designated area.
+        \item \textbf{Left Campus:} Permanently or temporarily left the venue.
+    \end{itemize}
+    \item \textbf{Quick Attendance Mode:} Use this mode for rapid scanning during rush hours.
+    \item \textbf{Real-time Sync:} All updates are saved instantly and visible to coordinators.
+\end{itemize}
+
+\subsection{Classroom Status Bar}
+Keep the room status updated using the one-tap buttons:
+\begin{itemize}
+    \item \textbf{Class Active:} Normal hackathon activity.
+    \item \textbf{Class at Lunch:} Majority of students are out for food.
+    \item \textbf{Night/Sleeping:} Overnight resting period.
+    \item \textbf{Emergency/Medical:} Ongoing emergency in the room.
+    \item \textbf{Jury/Mentor Visit:} Mentors are currently evaluating teams.
+    \item \textbf{Temporarily Empty:} No students currently in the room.
+\end{itemize}
+
+\subsection{Issue Reporting}
+Report any issues immediately via the ``Report Issue'' page.
+\begin{itemize}
+    \item \textbf{Categories:} Medical, Technical/WiFi, Power, Food/Water, Security, Discipline/Noise, Equipment.
+    \item \textbf{Details:} Provide a brief description of the problem.
+    \item \textbf{Tracking:} Coordinators will see these reports instantly on their dashboard.
+\end{itemize}
+
+\subsection{Emergency Actions}
+For critical situations, use the \textbf{Critical Action} button.
+\begin{itemize}
+    \item \textbf{Types:} Team Leaving, Team Missing, Emergency, Medical.
+    \item \textbf{Notification:} Submitting an emergency alert automatically notifies all 5 predefined organizers.
+\end{itemize}
+
+\section{Best Practices}
+\begin{itemize}
+    \item \textbf{Mobile-First:} The UI is optimized for mobile; use it on your smartphone for flexibility.
+    \item \textbf{Save Frequently:} While the system auto-saves, ensure you see the success indicators.
+    \item \textbf{Stay Vigilant:} Keep your room status updated to help coordinators manage the event flow.
+\end{itemize}
+
+\end{document}

@@ -20,6 +20,11 @@ router.post('/update', auth, async (req, res) => {
     const team = await Team.findById(member.team._id).populate('classroom');
     const classroom = await Classroom.findById(team.classroom._id);
 
+    // Skip if blocked
+    if (member.currentStatus === 'blocked') {
+      return res.status(403).json({ message: 'Cannot update status of a blocked member' });
+    }
+
     // Update member status
     member.currentStatus = status;
     member.statusHistory.push({
@@ -78,18 +83,21 @@ router.post('/bulk-update', auth, async (req, res) => {
     const { updates, roomNumber } = req.body; // updates: [{teamId, presentCount, totalCount, members: [{memberId, status}]}]
 
     const results = [];
-    
+
     for (const update of updates) {
       const { teamId, members } = update;
       const team = await Team.findById(teamId).populate('classroom');
-      
+
       if (!team) continue;
 
       for (const memberUpdate of members) {
         const { memberId, status } = memberUpdate;
         const member = await Member.findById(memberId);
-        
+
         if (!member) continue;
+
+        // Skip if blocked - cannot change status of members blocked during gate entry
+        if (member.currentStatus === 'blocked') continue;
 
         member.currentStatus = status;
         member.statusHistory.push({

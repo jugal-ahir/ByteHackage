@@ -279,35 +279,35 @@ const AttendanceView = () => {
                           <button
                             className={`status-btn status-present ${member.currentStatus === 'present' ? 'active' : ''}`}
                             onClick={() => updateMemberStatus(member._id, 'present', team.teamName)}
-                            disabled={updating[member._id]}
+                            disabled={updating[member._id] || member.currentStatus === 'blocked'}
                           >
                             Present
                           </button>
                           <button
                             className={`status-btn status-absent ${member.currentStatus === 'absent' ? 'active' : ''}`}
                             onClick={() => updateMemberStatus(member._id, 'absent', team.teamName)}
-                            disabled={updating[member._id]}
+                            disabled={updating[member._id] || member.currentStatus === 'blocked'}
                           >
                             Absent
                           </button>
                           <button
                             className={`status-btn status-lunch ${member.currentStatus === 'lunch' ? 'active' : ''}`}
                             onClick={() => updateMemberStatus(member._id, 'lunch', team.teamName)}
-                            disabled={updating[member._id]}
+                            disabled={updating[member._id] || member.currentStatus === 'blocked'}
                           >
                             At Lunch
                           </button>
                           <button
                             className={`status-btn status-sleeping ${member.currentStatus === 'sleeping' ? 'active' : ''}`}
                             onClick={() => updateMemberStatus(member._id, 'sleeping', team.teamName)}
-                            disabled={updating[member._id]}
+                            disabled={updating[member._id] || member.currentStatus === 'blocked'}
                           >
                             Sleeping
                           </button>
                           <button
                             className={`status-btn status-left ${member.currentStatus === 'left' ? 'active' : ''}`}
                             onClick={() => updateMemberStatus(member._id, 'left', team.teamName)}
-                            disabled={updating[member._id]}
+                            disabled={updating[member._id] || member.currentStatus === 'blocked'}
                           >
                             Left Campus
                           </button>

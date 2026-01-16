@@ -12,7 +12,7 @@ const memberSchema = new mongoose.Schema({
   },
   currentStatus: {
     type: String,
-    enum: ['present', 'absent', 'lunch', 'sleeping', 'left'],
+    enum: ['present', 'absent', 'lunch', 'sleeping', 'left', 'blocked'],
     default: 'present'
   },
   gateEntry: {
@@ -27,7 +27,7 @@ const memberSchema = new mongoose.Schema({
   statusHistory: [{
     status: {
       type: String,
-      enum: ['present', 'absent', 'lunch', 'sleeping', 'left']
+      enum: ['present', 'absent', 'lunch', 'sleeping', 'left', 'blocked']
     },
     timestamp: {
       type: Date,

@@ -25,9 +25,11 @@ const QuickAttendanceMode = () => {
       // Initialize counts
       const counts = {};
       teamsData.forEach(team => {
+        const nonBlockedMembers = team.members ? team.members.filter(m => m.currentStatus !== 'blocked') : [];
         counts[team._id] = {
-          present: team.presentCount || 0,
-          total: team.totalCount || 0
+          present: team.members ? team.members.filter(m => m.currentStatus === 'present').length : (team.presentCount || 0),
+          total: nonBlockedMembers.length,
+          blocked: team.members ? team.members.filter(m => m.currentStatus === 'blocked').length : 0
         };
       });
       setTeamCounts(counts);
@@ -82,9 +84,11 @@ const QuickAttendanceMode = () => {
         const presentCount = count.present;
         const totalCount = count.total;
 
-        // Determine which members should be present/absent
+        // Determine which non-blocked members should be present/absent
         const members = team.members || [];
-        const memberUpdates = members.map((member, index) => ({
+        const nonBlockedMembers = members.filter(m => m.currentStatus !== 'blocked');
+
+        const memberUpdates = nonBlockedMembers.map((member, index) => ({
           memberId: member._id,
           status: index < presentCount ? 'present' : 'absent'
         }));
@@ -162,6 +166,11 @@ const QuickAttendanceMode = () => {
                 </button>
                 <div className="count-display">
                   {count.present} / {count.total}
+                  {count.blocked > 0 && (
+                    <div style={{ fontSize: '0.65rem', color: '#ef4444', fontWeight: 600 }}>
+                      ({count.blocked} BLOCKED)
+                    </div>
+                  )}
                 </div>
                 <button
                   className="count-btn"

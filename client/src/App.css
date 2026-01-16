@@ -25,9 +25,12 @@
   letter-spacing: 0.01em;
 }
 
-.btn:disabled {
+.status-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  background-color: var(--gray-100);
+  border-color: var(--border-medium);
+  color: var(--gray-400);
   pointer-events: none;
 }
 
@@ -468,9 +471,12 @@
 }
 
 @keyframes pulse-emergency {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: var(--shadow-sm);
   }
+
   50% {
     box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1), var(--shadow-md);
   }
@@ -620,6 +626,12 @@
   color: var(--gray-600);
 }
 
+.status-badge.status-blocked {
+  background-color: #fee2e2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+}
+
 /* ============================================
    RESPONSIVE DESIGN
    ============================================ */
@@ -627,27 +639,27 @@
   .container {
     padding: var(--space-4);
   }
-  
+
   .classroom-status-bar {
     grid-template-columns: 1fr;
   }
-  
+
   .member-status-buttons {
     grid-template-columns: 1fr;
   }
-  
+
   .status-btn {
     width: 100%;
   }
-  
+
   .classroom-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .issue-categories {
     grid-template-columns: 1fr;
   }
-  
+
   .btn {
     width: 100%;
   }
